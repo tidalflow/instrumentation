@@ -1,0 +1,21 @@
+{
+  "name": "@bedrockio/instrumentation",
+  "version": "1.0.0",
+  "description": "Auto instrumentations of your code",
+  "main": "src/main.js",
+  "author": "Kaare Larsen",
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/opentelemetry-cloud-trace-exporter": "^0.8.0",
+    "@opentelemetry/api": "^0.14.0",
+    "@opentelemetry/core": "^0.14.0",
+    "@opentelemetry/koa-instrumentation": "^0.12.0",
+    "@opentelemetry/node": "^0.14.0",
+    "@opentelemetry/plugin-dns": "^0.12.0",
+    "@opentelemetry/plugin-grpc-js": "^0.14.0",
+    "@opentelemetry/plugin-http": "^0.14.0",
+    "@opentelemetry/plugin-https": "^0.14.0",
+    "@opentelemetry/plugin-mongodb": "^0.12.0",
+    "@opentelemetry/tracing": "^0.14.0"
+  }
+}
