@@ -5,8 +5,6 @@ const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
 
 const { LogLevel } = require("@opentelemetry/core");
 
-let tracer;
-
 /**
  * Returns a tracer from the global tracer provider
  * @param {string} [name]
