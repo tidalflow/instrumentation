@@ -5,6 +5,12 @@ const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
 
 const { LogLevel } = require("@opentelemetry/core");
 
+const {
+  TraceExporter,
+} = require("@google-cloud/opentelemetry-cloud-trace-exporter");
+
+const { ZipkinExporter } = require("@opentelemetry/exporter-zipkin");
+
 /**
  * Returns a tracer from the global tracer provider
  * @param {string} [name]
@@ -27,11 +33,12 @@ exports.initalize = function (options = {}) {
     ...options,
   });
 
-  const {
-    TraceExporter,
-  } = require("@google-cloud/opentelemetry-cloud-trace-exporter");
+  if (process.env.NODE_ENV !== "production") {
+    // Configure the span processor to send spans to the exporter
+    provider.addSpanProcessor(new SimpleSpanProcessor(new TraceExporter()));
+  } else {
+    provider.addSpanProcessor(new SimpleSpanProcessor(new ZipkinExporter()));
+  }
 
-  // Configure the span processor to send spans to the exporter
-  provider.addSpanProcessor(new SimpleSpanProcessor(new TraceExporter()));
   provider.register();
 };
