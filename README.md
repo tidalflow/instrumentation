@@ -12,7 +12,7 @@ npm install @bedrockio/instrumentation
 
 # Zipkin Server
 
-Start the server by running
+Start the server by running (needs to be running before the server starts)
 
 `docker run -d -p 9411:9411 openzipkin/zipkin`
 

@@ -5,11 +5,18 @@ const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
 
 const { LogLevel } = require("@opentelemetry/core");
 
-const {
-  TraceExporter,
-} = require("@google-cloud/opentelemetry-cloud-trace-exporter");
-
-const { ZipkinExporter } = require("@opentelemetry/exporter-zipkin");
+const isZiplinRunning = (port) =>
+  new Promise((resolve) => {
+    const server = require("http")
+      .createServer()
+      .listen(port, () => {
+        server.close();
+        resolve(false);
+      })
+      .on("error", () => {
+        resolve(true);
+      });
+  });
 
 /**
  * Returns a tracer from the global tracer provider
@@ -33,12 +40,24 @@ exports.initalize = function (options = {}) {
     ...options,
   });
 
-  if (process.env.NODE_ENV !== "production") {
+  const {
+    TraceExporter,
+  } = require("@google-cloud/opentelemetry-cloud-trace-exporter");
+
+  const { ZipkinExporter } = require("@opentelemetry/exporter-zipkin");
+
+  if (process.env.NODE_ENV === "production") {
     // Configure the span processor to send spans to the exporter
     provider.addSpanProcessor(new SimpleSpanProcessor(new TraceExporter()));
   } else {
-    provider.addSpanProcessor(new SimpleSpanProcessor(new ZipkinExporter()));
+    isZiplinRunning(9411).then((running) => {
+      if (running) {
+        provider.addSpanProcessor(
+          new SimpleSpanProcessor(new ZipkinExporter())
+        );
+      }
+    });
   }
 
-  provider.register();
+  return provider.register();
 };
