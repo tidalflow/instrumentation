@@ -27,7 +27,14 @@ exports.getTracer = function (name = "global") {
   return opentelemetry.trace.getTracer(name);
 };
 
-exports.initalize = function (options = {}) {
+exports.initalize = function (
+  {
+    http = {
+      ignoreIncomingPaths: ["/"],
+      ignoreOutgoingUrls: [],
+    },
+  } = { http: {} }
+) {
   const provider = new NodeTracerProvider({
     logLevel: LogLevel.WARN,
     plugins: {
@@ -36,8 +43,13 @@ exports.initalize = function (options = {}) {
         path: "@opentelemetry/koa-instrumentation",
         enhancedDatabaseReporting: true,
       },
+      http: {
+        // You may use a package name or absolute path to the file.
+        path: "@opentelemetry/plugin-http",
+        // http plugin options
+        ...http,
+      },
     },
-    ...options,
   });
 
   const {
