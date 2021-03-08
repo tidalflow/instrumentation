@@ -27,7 +27,11 @@ exports.getTracer = function (name = "global") {
   return opentelemetry.trace.getTracer(name);
 };
 
-exports.initalize = function (
+exports.logger = logger;
+exports.createLogger = createLogger;
+exports.loggingMiddleware = loggingMiddleware;
+
+function initalizeTelemetry(
   {
     http = {
       ignoreIncomingPaths: ["/"],
@@ -72,4 +76,13 @@ exports.initalize = function (
   }
 
   return provider.register();
+}
+
+exports.initalizeTelemetry = initalizeTelemetry;
+
+exports.initalize = function (args) {
+  console.warn(
+    `@bedrock/instrumentation "initalize" is deprecated please use "initalizeTelemetry" instead.`
+  );
+  initalizeTelemetry(args);
 };
