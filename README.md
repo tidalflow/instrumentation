@@ -21,7 +21,7 @@ npm install @bedrockio/instrumentation
 **Important** This should be initalized before any other code is executed / required or it will not work correctly.
 
 ```javascript
-const { initalizeTelemetry } = require("bedrockio/instrumentation");
+const { initalizeTelemetry } = require("@bedrockio/instrumentation");
 initalizeTelemetry();
 // other code
 ```
