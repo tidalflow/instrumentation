@@ -17,6 +17,7 @@
     "@opentelemetry/plugin-http": "0.14.0",
     "@opentelemetry/plugin-https": "0.14.0",
     "@opentelemetry/plugin-mongodb": "^0.13.1",
-    "@opentelemetry/tracing": "^0.14.0"
+    "@opentelemetry/tracing": "^0.14.0",
+    "pino": "^6.11.1"
   }
 }

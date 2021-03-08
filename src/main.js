@@ -2,6 +2,7 @@ const opentelemetry = require("@opentelemetry/api");
 
 const { NodeTracerProvider } = require("@opentelemetry/node");
 const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
+const { logger, createLogger, loggingMiddleware } = require("./logging");
 
 const { LogLevel } = require("@opentelemetry/core");
 
@@ -27,7 +28,11 @@ exports.getTracer = function (name = "global") {
   return opentelemetry.trace.getTracer(name);
 };
 
-exports.initalize = function (
+exports.logger = logger;
+exports.createLogger = createLogger;
+exports.loggingMiddleware = loggingMiddleware;
+
+exports.initalizeTracer = function (
   {
     http = {
       ignoreIncomingPaths: ["/"],
