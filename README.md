@@ -3,7 +3,7 @@
 This providers tools to instrumentate your api
 
 - Expose logger (wrapping https://getpino.io)
-- Http middleware
+- Http logging middleware
 - Providers tracing of your application via https://opentelemetry.io/
 
 For exporting both logging and tracing:
