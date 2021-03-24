@@ -32,7 +32,7 @@ exports.logger = logger;
 exports.createLogger = createLogger;
 exports.loggingMiddleware = loggingMiddleware;
 
-exports.initalizeTelemetry = function (
+exports.setupTelemetry = function (
   {
     http = {
       ignoreIncomingPaths: ["/"],
@@ -79,11 +79,11 @@ exports.initalizeTelemetry = function (
   return provider.register();
 };
 
-exports.initalizeTelemetry = initalizeTelemetry;
+exports.setupTelemetry = setupTelemetry;
 
 exports.initalize = function (args) {
   console.warn(
-    `@bedrock/instrumentation "initalize" is deprecated please use "initalizeTelemetry" instead.`
+    `@bedrock/instrumentation "initalize" is deprecated please use "setupTelemetry" instead.`
   );
-  initalizeTelemetry(args);
+  setupTelemetry(args);
 };

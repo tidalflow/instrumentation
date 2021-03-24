@@ -82,7 +82,7 @@ exports.createLogger = createLogger;
 
 const formatters = {
   // https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry
-  gcloud: function ({ request, response, latency, error }) {
+  gcloud: function ({ request, response, latency }) {
     return {
       message: `${request.method} ${request.url} ${
         response.getHeader("content-length") || "?"
@@ -174,4 +174,4 @@ const testLogger = {
   version: "console",
 };
 
-exports.logger = ENV_NAME === "test" ? testLogger : parentLogger;
+exports.logger = process.NODE_ENV === "production" ? parentLogger : testLogger;
