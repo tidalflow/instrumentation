@@ -4,19 +4,6 @@ const { NodeTracerProvider } = require("@opentelemetry/node");
 const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
 const { logger, createLogger, loggingMiddleware } = require("./logging");
 
-const isZiplinRunning = (port) =>
-  new Promise((resolve) => {
-    const server = require("http")
-      .createServer()
-      .listen(port, () => {
-        server.close();
-        resolve(false);
-      })
-      .on("error", () => {
-        resolve(true);
-      });
-  });
-
 /**
  * Returns a tracer from the global tracer provider
  * @param {string} [name]
