@@ -64,11 +64,13 @@ const formatters = {
     };
   },
   development: function ({ request, response, latency }) {
+    const chalk = require('chalk');
+    const { method, url } = request;
+    const { statusCode: status } = response;
     const contentLength = response.getHeader("content-length");
     const formatLength = contentLength ? bytes(Number(contentLength)) : "?KB";
-    return [
-      `${request.method} ${response.statusCode} ${request.url} ${formatLength} - ${latency}ms`,
-    ];
+    const meta = `${latency}ms ${formatLength}`;
+    return `${chalk.white(method)} ${chalk.green(status)} ${chalk.gray(url)} ${chalk.gray(meta)}`;
   },
 };
 
