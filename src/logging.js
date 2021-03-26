@@ -45,7 +45,7 @@ const formatters = {
   // https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry
   gcloud: function ({ request, response, latency }) {
     const contentLength = response.getHeader("content-length");
-    const formatLength = contentLength ? bytes(contentLength) : "?KB";
+    const formatLength = contentLength ? bytes(Number(contentLength)) : "?KB";
 
     return {
       message: `${request.method} ${request.url} ${formatLength} - ${latency}ms`,
