@@ -52,7 +52,7 @@ const formatters = {
       httpRequest: {
         requestMethod: request.method.toUpperCase(),
         requestUrl: request.url,
-        requestSize: request.headers["content-length"],
+        requestSize: contentLength,
         status: response.statusCode,
         userAgent: request.headers["user-agent"],
         referer: request.headers["referer"],
