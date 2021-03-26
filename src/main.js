@@ -1,3 +1,10 @@
+if (process.env.ENV_NAME !== "product") {
+  console.warn(
+    "@bedrockio/instrumentation",
+    "Running in Developer mode, some features are turned off (https://bit.ly/2PaHHvx)"
+  );
+}
+
 const opentelemetry = require("@opentelemetry/api");
 
 const { NodeTracerProvider } = require("@opentelemetry/node");

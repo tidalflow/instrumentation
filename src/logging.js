@@ -1,13 +1,8 @@
 const opentelemetry = require("@opentelemetry/api");
 
-const ENV_NAME = process.env.NODE_ENV;
+const bytes = require("bytes");
 
-if (ENV_NAME !== "product") {
-  console.warn(
-    "@bedrockio/instrumentation",
-    "Running in Developer mode, some features are turned off ()"
-  );
-}
+const ENV_NAME = process.env.NODE_ENV;
 
 const parentLogger =
   ENV_NAME === "production"
@@ -48,11 +43,12 @@ exports.createLogger = createLogger;
 
 const formatters = {
   // https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry
-  gcloud: function ({ request, response, latency, ctx }) {
+  gcloud: function ({ request, response, latency }) {
+    const contentLength = response.getHeader("content-length");
+    const formatLength = contentLength ? bytes(contentLength) : "?KB";
+
     return {
-      message: `${request.method} ${request.url} ${
-        response.getHeader("content-length") || "?"
-      } - ${latency} ms`,
+      message: `${request.method} ${request.url} ${formatLength} - ${latency}ms`,
       httpRequest: {
         requestMethod: request.method.toUpperCase(),
         requestUrl: request.url,
@@ -67,11 +63,11 @@ const formatters = {
       },
     };
   },
-  development: function ({ request, response, latency, ctx }) {
+  development: function ({ request, response, latency }) {
+    const contentLength = response.getHeader("content-length");
+    const formatLength = contentLength ? bytes(Number(contentLength)) : "?KB";
     return [
-      `${request.method} ${response.statusCode} ${request.url} ${
-        response.getHeader("content-length") || "?"
-      } - ${latency} ms`,
+      `${request.method} ${response.statusCode} ${request.url} ${formatLength} - ${latency}ms`,
     ];
   },
 };
