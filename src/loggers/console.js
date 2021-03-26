@@ -31,17 +31,17 @@ class ConsoleLogger {
       return;
     }
 
-    let levelStr = chalk.yellow(level.toUpperCase());
-    if (["trace", "debug", "info"].includes(level)) {
-      levelStr = chalk.gray(level.toUpperCase());
-    } else if (["warn"].includes(level)) {
-      levelStr = chalk.yellow(level.toUpperCase());
+    let levelStr = level.toUpperCase().padStart(5, ' ');
+    if (["warn"].includes(level)) {
+      levelStr = chalk.yellow(levelStr);
     } else if (["error", "fatal"].includes(level)) {
-      levelStr = chalk.red(level.toUpperCase());
+      levelStr = chalk.red(levelStr);
+    } else {
+      levelStr = chalk.gray(levelStr);
     }
 
     loggerFn(
-      chalk.dim(`[${new Date().toISOString()}]`),
+      chalk.gray(`[${getLocalDate()}]`),
       levelStr,
       ...Object.keys(this.props).map((key) => {
         return `${key}: ${this.props[key]}`;
@@ -73,6 +73,13 @@ class ConsoleLogger {
   fatal(...args) {
     this.fatal(console.error, "fatal", ...args);
   }
+}
+
+function getLocalDate() {
+  // Local date in ISO format, no ms.
+  let date = new Date();
+  date.setTime(date.getTime() - date.getTimezoneOffset() * 60000);
+  return date.toISOString().slice(0, -5);
 }
 
 module.exports = new ConsoleLogger();
