@@ -1,4 +1,4 @@
-if (process.env.ENV_NAME !== "product") {
+if (process.env.ENV_NAME !== "production") {
   console.warn(
     "@bedrockio/instrumentation",
     "Running in Developer mode, some features are turned off (https://bit.ly/2PaHHvx)"
