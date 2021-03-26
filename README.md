@@ -21,16 +21,25 @@ npm install @bedrockio/instrumentation
 **Important** This should be initalized before any other code is executed / required or it will not work correctly.
 
 ```javascript
-const { initalizeTelemetry } = require("@bedrockio/instrumentation");
-initalizeTelemetry();
+const { setupTelemetry } = require("@bedrockio/instrumentation");
+setupTelemetry();
 // other code
 ```
 
+## Developer mode vs Production mode
+
+In none product mode (process.env.NODE_ENV != `production`) some features are turn off or swapped out with development friendly solutions.
+
+- Tracing/Instrumention is turned off (makes the boot time slower)
+- The logger is switch to develop friendly solution
+  - No request context (doesn't work without tracing)
+  - No structured logging output, simple output rendering using `console`
+
 ### Methods
 
-#### initalizeTelemetry
+#### setupTelemetry
 
-Initialize the instrumentations.
+setup the instrumentations (tracing).
 
 #### getTracer
 
@@ -57,11 +66,3 @@ logger.info("Hello", { "foo": "bar" })
 ```
 
 The default logger
-
-# Zipkin Server
-
-Start the server by running (needs to be running before the server starts)
-
-`docker run -d -p 9411:9411 openzipkin/zipkin`
-
-And then open the browser `http://your_host:9411`

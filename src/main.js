@@ -4,8 +4,6 @@ const { NodeTracerProvider } = require("@opentelemetry/node");
 const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
 const { logger, createLogger, loggingMiddleware } = require("./logging");
 
-const { LogLevel } = require("@opentelemetry/core");
-
 const isZiplinRunning = (port) =>
   new Promise((resolve) => {
     const server = require("http")
@@ -32,7 +30,7 @@ exports.logger = logger;
 exports.createLogger = createLogger;
 exports.loggingMiddleware = loggingMiddleware;
 
-exports.setupTelemetry = function (
+function setupTelemetry(
   {
     http = {
       ignoreIncomingPaths: ["/"],
@@ -40,8 +38,11 @@ exports.setupTelemetry = function (
     },
   } = { http: {} }
 ) {
+  if (process.env.NODE_ENV !== "production") {
+    return;
+  }
+
   const provider = new NodeTracerProvider({
-    logLevel: LogLevel.WARN,
     plugins: {
       koa: {
         enabled: true,
@@ -61,29 +62,17 @@ exports.setupTelemetry = function (
     TraceExporter,
   } = require("@google-cloud/opentelemetry-cloud-trace-exporter");
 
-  const { ZipkinExporter } = require("@opentelemetry/exporter-zipkin");
-
-  if (process.env.NODE_ENV === "production") {
-    // Configure the span processor to send spans to the exporter
-    provider.addSpanProcessor(new SimpleSpanProcessor(new TraceExporter()));
-  } else {
-    isZiplinRunning(9411).then((running) => {
-      if (running) {
-        provider.addSpanProcessor(
-          new SimpleSpanProcessor(new ZipkinExporter())
-        );
-      }
-    });
-  }
+  // Configure the span processor to send spans to the exporter
+  provider.addSpanProcessor(new SimpleSpanProcessor(new TraceExporter()));
 
   return provider.register();
-};
+}
 
 exports.setupTelemetry = setupTelemetry;
 
-exports.initalize = function (args) {
+exports.initalize = exports.initialize = function (args) {
   console.warn(
-    `@bedrock/instrumentation "initalize" is deprecated please use "setupTelemetry" instead.`
+    `@bedrockio/instrumentation "initialize" is deprecated please use "setupTelemetry" instead.`
   );
   setupTelemetry(args);
 };

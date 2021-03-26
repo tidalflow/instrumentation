@@ -1,7 +1,18 @@
-const pino = require("pino");
 const opentelemetry = require("@opentelemetry/api");
 
-const ENV_NAME = process.env.ENV_NAME || process.env.NODE_ENV;
+const ENV_NAME = process.env.NODE_ENV;
+
+if (ENV_NAME !== "product") {
+  console.warn(
+    "@bedrockio/instrumentation",
+    "Running in Developer mode, some features are turned off ()"
+  );
+}
+
+const parentLogger =
+  ENV_NAME === "production"
+    ? require("./loggers/pino")
+    : require("./loggers/console");
 
 function getTracerContext() {
   const tracer = opentelemetry.trace.getTracer("http");
@@ -9,51 +20,6 @@ function getTracerContext() {
   if (!currentSpan) return null;
   return currentSpan.context();
 }
-
-const hooks = {
-  logMethod(inputArgs, method) {
-    if (inputArgs.length >= 2) {
-      const arg1 = inputArgs.shift();
-      const arg2 = inputArgs.shift();
-      return method.apply(this, [
-        {
-          details: arg2,
-          additionalProps: inputArgs.length ? inputArgs : undefined,
-        },
-        arg1,
-      ]);
-    }
-    return method.apply(this, inputArgs);
-  },
-};
-
-const parentLogger = pino({
-  messageKey: "message",
-  formatters: {
-    level(_, level) {
-      if (level === 20) {
-        return { severity: "debug" };
-      }
-      if (level === 30) {
-        return { severity: "info" };
-      }
-      if (level === 40) {
-        return { severity: "warning" };
-      }
-      if (level === 50) {
-        return { severity: "error" };
-      }
-      if (level >= 60) {
-        return { severity: "critical" };
-      }
-      return { severity: "default" };
-    },
-  },
-  base: null,
-  level: process.env.LOG_LEVEL || "info",
-  timestamp: pino.stdTimeFunctions.isoTime,
-  hooks,
-});
 
 function formatCurrentTrace({ traceId, spanId }) {
   return {
@@ -66,8 +32,8 @@ function formatCurrentTrace({ traceId, spanId }) {
 /**
  * @returns {import('pino').Logger} Logger
  */
-function createLogger(options = {}) {
-  const globalContext = getTracerContext();
+function createLogger(options = {}, tracingEnabled) {
+  const globalContext = tracingEnabled && getTracerContext();
   const globalContextFields = globalContext
     ? formatCurrentTrace(globalContext)
     : {};
@@ -82,7 +48,7 @@ exports.createLogger = createLogger;
 
 const formatters = {
   // https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry
-  gcloud: function ({ request, response, latency }) {
+  gcloud: function ({ request, response, latency, ctx }) {
     return {
       message: `${request.method} ${request.url} ${
         response.getHeader("content-length") || "?"
@@ -101,6 +67,20 @@ const formatters = {
       },
     };
   },
+  development: function ({ request, response, latency, ctx }) {
+    return [
+      `${request.method} ${response.statusCode} ${request.url} ${
+        response.getHeader("content-length") || "?"
+      } - ${latency} ms`,
+    ];
+  },
+};
+
+const levelToHttp = {
+  401: "warn",
+  400: "warn",
+  404: "error",
+  500: "error",
 };
 
 function onResFinished(
@@ -108,30 +88,35 @@ function onResFinished(
   httpRequestFormat,
   startTime,
   request,
-  response,
-  error
+  response
 ) {
   const latency = Date.now() - startTime;
-  const isError = response.statusCode == 500 || !!error;
+  const level = levelToHttp[response.statusCode] || "info";
 
-  loggerInstance[isError ? "error" : "info"](
-    httpRequestFormat({
-      response,
-      request,
-      latency: latency,
-    })
-  );
+  const payload = httpRequestFormat({
+    response,
+    request,
+    latency: latency,
+  });
+
+  if (Array.isArray(payload)) {
+    loggerInstance[level](...payload);
+  } else {
+    loggerInstance[level](payload);
+  }
 }
 
 exports.loggingMiddleware = function loggingMiddleware(options = {}) {
-  const { httpRequestFormat, ignoreUserAgents } = {
+  const { httpRequestFormat, ignoreUserAgents, tracingEnabled } = {
     ignoreUserAgents: [
       "GoogleHC/1.0",
       "kube-probe/1.17+",
       "kube-probe/1.16+",
       "kube-probe/1.15+",
     ],
-    httpRequestFormat: formatters.gcloud,
+    tracingEnabled: ENV_NAME === "production",
+    httpRequestFormat:
+      ENV_NAME === "production" ? formatters.gcloud : formatters.development,
     ...options,
   };
 
@@ -143,7 +128,7 @@ exports.loggingMiddleware = function loggingMiddleware(options = {}) {
     const { req, res } = ctx;
 
     const startTime = Date.now();
-    const requestLogger = createLogger();
+    const requestLogger = createLogger({}, tracingEnabled);
 
     ctx.logger = requestLogger;
 
@@ -163,15 +148,4 @@ exports.loggingMiddleware = function loggingMiddleware(options = {}) {
   return loggingMiddlewareInner;
 };
 
-const testLogger = {
-  ...parentLogger,
-  trace: console.trace,
-  debug: console.debug,
-  info: console.info,
-  warn: console.warn,
-  error: console.error,
-  fatal: console.error,
-  version: "console",
-};
-
-exports.logger = process.NODE_ENV === "production" ? parentLogger : testLogger;
+exports.logger = parentLogger;
