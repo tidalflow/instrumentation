@@ -18,7 +18,7 @@
     "@opentelemetry/plugin-mongodb": "^0.14.0",
     "@opentelemetry/tracing": "^0.14.0",
     "bytes": "^3.1.0",
-    "chalk": "^4.1.0",
+    "kleur": "^4.1.4",
     "pino": "^6.11.1"
   },
   "devDependencies": {}

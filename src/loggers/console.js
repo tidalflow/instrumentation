@@ -1,10 +1,10 @@
-const chalk = require("chalk");
+const klour = require("kleur");
 
 const levels = ["trace", "debug", "info", "warn", "error", "fatal"];
 
 class ConsoleLogger {
   _version = "console";
-  _level = "info";
+  _level = process.env.LOG_LEVEL || "info";
 
   constructor(props = {}) {
     this.props = props;
@@ -31,13 +31,13 @@ class ConsoleLogger {
       return;
     }
 
-    let levelStr = level.toUpperCase().padStart(5, ' ');
+    let levelStr = level.toUpperCase().padStart(5, " ");
     if (["warn"].includes(level)) {
-      levelStr = chalk.yellow(levelStr);
+      levelStr = klour.yellow(levelStr);
     } else if (["error", "fatal"].includes(level)) {
-      levelStr = chalk.red(levelStr);
+      levelStr = klour.red(levelStr);
     } else {
-      levelStr = chalk.gray(levelStr);
+      levelStr = klour.gray(levelStr);
     }
 
     loggerFn(

@@ -11,6 +11,12 @@ const { NodeTracerProvider } = require("@opentelemetry/node");
 const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
 const { logger, createLogger, loggingMiddleware } = require("./logging");
 
+if (logger.level) {
+  console.info(
+    `@bedrockio/instrumentation log level is set to ${logger.level} (overwrite by setting process.env.LOG_LEVEL)`
+  );
+}
+
 /**
  * Returns a tracer from the global tracer provider
  * @param {string} [name]
