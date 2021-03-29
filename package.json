@@ -1,6 +1,6 @@
 {
   "name": "@bedrockio/instrumentation",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Auto instrumentations using open-telemetry",
   "main": "src/main.js",
   "author": "Kaare Larsen",
