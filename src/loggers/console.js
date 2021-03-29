@@ -41,7 +41,7 @@ class ConsoleLogger {
     }
 
     loggerFn(
-      chalk.gray(`[${getLocalDate()}]`),
+      klour.gray(`[${getLocalDate()}]`),
       levelStr,
       ...Object.keys(this.props).map((key) => {
         return `${key}: ${this.props[key]}`;

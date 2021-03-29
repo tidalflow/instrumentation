@@ -1,4 +1,5 @@
 const opentelemetry = require("@opentelemetry/api");
+const klour = require("kleur");
 
 const bytes = require("bytes");
 
@@ -64,13 +65,14 @@ const formatters = {
     };
   },
   development: function ({ request, response, latency }) {
-    const chalk = require('chalk');
     const { method, url } = request;
     const { statusCode: status } = response;
     const contentLength = response.getHeader("content-length");
     const formatLength = contentLength ? bytes(Number(contentLength)) : "?KB";
     const meta = `${latency}ms ${formatLength}`;
-    return `${chalk.white(method)} ${chalk.green(status)} ${chalk.gray(url)} ${chalk.gray(meta)}`;
+    return `${klour.white(method)} ${klour.green(status)} ${klour.gray(
+      url
+    )} ${klour.gray(meta)}`;
   },
 };
 

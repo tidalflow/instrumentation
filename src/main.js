@@ -1,7 +1,6 @@
 if (process.env.ENV_NAME !== "production") {
   console.warn(
-    "@bedrockio/instrumentation",
-    "Running in Developer mode, some features are turned off (https://bit.ly/2PaHHvx)"
+    "[instrumentation] Running in developer mode, some features are turned off (https://bit.ly/2PaHHvx)"
   );
 }
 
@@ -13,7 +12,7 @@ const { logger, createLogger, loggingMiddleware } = require("./logging");
 
 if (logger.level) {
   console.info(
-    `@bedrockio/instrumentation log level is set to ${logger.level} (overwrite by setting process.env.LOG_LEVEL)`
+    `[instrumentation] Log level is set to ${logger.level} (controlled by process.env.LOG_LEVEL)`
   );
 }
 
