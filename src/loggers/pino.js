@@ -40,7 +40,7 @@ module.exports = pino({
     },
   },
   base: null,
-  level: process.env.LOG_LEVEL || "info",
+  level: process.env.LOG_LEVEL || "trace",
   timestamp: pino.stdTimeFunctions.isoTime,
   hooks,
 });

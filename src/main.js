@@ -1,20 +1,8 @@
-if (process.env.ENV_NAME !== "production") {
-  console.warn(
-    "[instrumentation] Running in developer mode, some features are turned off (https://bit.ly/2PaHHvx)"
-  );
-}
-
 const opentelemetry = require("@opentelemetry/api");
 
 const { NodeTracerProvider } = require("@opentelemetry/node");
 const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
 const { logger, createLogger, loggingMiddleware } = require("./logging");
-
-if (logger.level) {
-  console.info(
-    `[instrumentation] Log level is set to ${logger.level} (controlled by process.env.LOG_LEVEL)`
-  );
-}
 
 /**
  * Returns a tracer from the global tracer provider
@@ -38,6 +26,9 @@ function setupTelemetry(
   } = { http: {} }
 ) {
   if (process.env.NODE_ENV !== "production") {
+    console.log(
+      "[instrumentation] Running in developer mode, some features are turned off (https://bit.ly/2PaHHvx)"
+    );
     return;
   }
 
