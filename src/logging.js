@@ -3,15 +3,16 @@ const klour = require("kleur");
 
 const bytes = require("bytes");
 
-const ENV_NAME = process.env.NODE_ENV;
+const NODE_ENV = process.env.NODE_ENV;
 
 const parentLogger =
-  ENV_NAME === "production"
+  NODE_ENV === "production"
     ? require("./loggers/pino")
     : require("./loggers/console");
 
 function getTracerContext() {
   const tracer = opentelemetry.trace.getTracer("http");
+  if (!tracer.getCurrentSpan) return null;
   const currentSpan = tracer.getCurrentSpan();
   if (!currentSpan) return null;
   return currentSpan.context();
@@ -108,23 +109,14 @@ function onResFinished(
 
 exports.loggingMiddleware = function loggingMiddleware(options = {}) {
   const { httpRequestFormat, ignoreUserAgents, tracingEnabled } = {
-    ignoreUserAgents: [
-      "GoogleHC/1.0",
-      "kube-probe/1.17+",
-      "kube-probe/1.16+",
-      "kube-probe/1.15+",
-    ],
-    tracingEnabled: ENV_NAME === "production",
+    ignoreUserAgents: [/GoogleHC\/.*/i, /kube-probe\/.*/i],
+    tracingEnabled: NODE_ENV === "production",
     httpRequestFormat:
-      ENV_NAME === "production" ? formatters.gcloud : formatters.development,
+      NODE_ENV === "production" ? formatters.gcloud : formatters.development,
     ...options,
   };
 
   async function loggingMiddlewareInner(ctx, next) {
-    if (ignoreUserAgents.includes(ctx.request.get("user-agent"))) {
-      return next();
-    }
-
     const { req, res } = ctx;
 
     const startTime = Date.now();
@@ -132,7 +124,11 @@ exports.loggingMiddleware = function loggingMiddleware(options = {}) {
 
     ctx.logger = requestLogger;
 
-    if (ENV_NAME === "test") {
+    if (ignoreUserAgents.some((rx) => rx.test(ctx.request.get("user-agent")))) {
+      return next();
+    }
+
+    if (NODE_ENV === "test") {
       return next();
     }
 

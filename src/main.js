@@ -25,23 +25,15 @@ function setupTelemetry(
     },
   } = { http: {} }
 ) {
-  if (process.env.NODE_ENV !== "production") {
-    console.log(
-      "[instrumentation] Running in developer mode, some features are turned off (https://bit.ly/2PaHHvx)"
-    );
-    return;
-  }
-
   const provider = new NodeTracerProvider({
     plugins: {
       koa: {
         enabled: true,
-        path: "@opentelemetry/koa-instrumentation",
-        enhancedDatabaseReporting: true,
+        path: "@opentelemetry/instrumentation-koa",
       },
       http: {
         // You may use a package name or absolute path to the file.
-        path: "@opentelemetry/plugin-http",
+        path: "@opentelemetry/instrumentation-http",
         // http plugin options
         ...http,
       },
