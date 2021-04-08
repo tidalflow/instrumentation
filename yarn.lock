@@ -66,7 +66,7 @@
     "@opentelemetry/semantic-conventions" "^0.18.0"
     semver "^7.3.2"
 
-"@opentelemetry/instrumentation-grpc@^0.18.2":
+"@opentelemetry/instrumentation-grpc@^0.18.0":
   version "0.18.2"
   resolved "https://registry.yarnpkg.com/@opentelemetry/instrumentation-grpc/-/instrumentation-grpc-0.18.2.tgz#41d5379f33ce5c087a629ee859541c2e5fce2cdd"
   integrity sha512-0Ho2hpQ81lxluSIjRfZQzUKdN4mi0vhdwKXiBNX82kRhIQTLEGgDcW+SMs/qukXbH0yQli6kGNs7X0gJrtQFGw==
@@ -76,7 +76,7 @@
     "@opentelemetry/instrumentation" "^0.18.2"
     "@opentelemetry/semantic-conventions" "^0.18.2"
 
-"@opentelemetry/instrumentation-http@^0.18.2":
+"@opentelemetry/instrumentation-http@^0.18.0":
   version "0.18.2"
   resolved "https://registry.yarnpkg.com/@opentelemetry/instrumentation-http/-/instrumentation-http-0.18.2.tgz#cc5f15583572bdcb77ac6f3878f10c23a656dc0d"
   integrity sha512-DnwJva3kJ5T7lm3lu/Atvur8Q/vjyz93b50jJZ+vDoVL4vox0sj/Ttd6G39b9TQUUqHivzm7L/V5jgdCKtrR8A==
@@ -116,7 +116,7 @@
     semver "^7.3.2"
     shimmer "^1.2.1"
 
-"@opentelemetry/node@^0.18.2":
+"@opentelemetry/node@^0.18.0":
   version "0.18.2"
   resolved "https://registry.yarnpkg.com/@opentelemetry/node/-/node-0.18.2.tgz#a40fd5537daf0b0755181c09aca93df25e7ba5c4"
   integrity sha512-9cJtXQga3dSdkNcNyhVipxNg2g7fNa2f/lE08a035ZA3NKKIGKaPop/p+Uc5+2gmkZfzKkmkZRn9YVOBRHg/ww==
@@ -140,7 +140,7 @@
   resolved "https://registry.yarnpkg.com/@opentelemetry/semantic-conventions/-/semantic-conventions-0.18.2.tgz#a0f15d2ef752567713c1f59f69c6742edb03030c"
   integrity sha512-+0P+PrP9qSFVaayNdek4P1OAGE+PEl2SsufuHDRmUpOY25Wzjo7Atyar56Trjc32jkNy4lID6ZFT6BahsR9P9A==
 
-"@opentelemetry/tracing@^0.18.2":
+"@opentelemetry/tracing@^0.18.0", "@opentelemetry/tracing@^0.18.2":
   version "0.18.2"
   resolved "https://registry.yarnpkg.com/@opentelemetry/tracing/-/tracing-0.18.2.tgz#b247bcd7c68f95000ca20014ce4bd05c3f561b7a"
   integrity sha512-IQSu+NwMhX8O9Wkjc4HjNqs/aKfkcInCE3dQuAOBBec/saLrM6jqd+Fa5QUzg03WMOqpDuZm5KTkr5+6DUrr0g==

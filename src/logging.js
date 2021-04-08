@@ -1,4 +1,4 @@
-const opentelemetry = require("@opentelemetry/api");
+const api = require("@opentelemetry/api");
 const klour = require("kleur");
 
 const bytes = require("bytes");
@@ -11,18 +11,16 @@ const parentLogger =
     : require("./loggers/console");
 
 function getTracerContext() {
-  const tracer = opentelemetry.trace.getTracer("http");
-  if (!tracer.getCurrentSpan) return null;
-  const currentSpan = tracer.getCurrentSpan();
+  const currentSpan = api.getSpan(api.context.active());
   if (!currentSpan) return null;
   return currentSpan.context();
 }
 
-function formatCurrentTrace({ traceId, spanId }) {
+function formatCurrentTrace({ traceId, spanId, traceFlags }) {
   return {
     "logging.googleapis.com/spanId": spanId,
     "logging.googleapis.com/trace": traceId,
-    "logging.googleapis.com/trace_sampled": true,
+    "logging.googleapis.com/trace_sampled": traceFlags === true,
   };
 }
 

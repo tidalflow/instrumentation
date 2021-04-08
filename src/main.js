@@ -1,7 +1,14 @@
 const opentelemetry = require("@opentelemetry/api");
 
+const { HttpInstrumentation } = require("@opentelemetry/instrumentation-http");
+const { KoaInstrumentation } = require("@opentelemetry/instrumentation-koa");
 const { NodeTracerProvider } = require("@opentelemetry/node");
-const { SimpleSpanProcessor } = require("@opentelemetry/tracing");
+const {
+  // ConsoleSpanExporter,
+  SimpleSpanProcessor,
+} = require("@opentelemetry/tracing");
+
+const { registerInstrumentations } = require("@opentelemetry/instrumentation");
 const { logger, createLogger, loggingMiddleware } = require("./logging");
 
 /**
@@ -25,19 +32,17 @@ function setupTelemetry(
     },
   } = { http: {} }
 ) {
-  const provider = new NodeTracerProvider({
-    plugins: {
-      koa: {
-        enabled: true,
-        path: "@opentelemetry/instrumentation-koa",
-      },
-      http: {
-        // You may use a package name or absolute path to the file.
-        path: "@opentelemetry/instrumentation-http",
-        // http plugin options
+  const provider = new NodeTracerProvider();
+  provider.register();
+
+  registerInstrumentations({
+    instrumentations: [
+      new HttpInstrumentation({
         ...http,
-      },
-    },
+      }),
+      new KoaInstrumentation(),
+    ],
+    tracerProvider: provider,
   });
 
   const {
@@ -46,6 +51,7 @@ function setupTelemetry(
 
   // Configure the span processor to send spans to the exporter
   provider.addSpanProcessor(new SimpleSpanProcessor(new TraceExporter()));
+  // provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
 
   return provider.register();
 }
