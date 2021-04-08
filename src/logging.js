@@ -20,7 +20,7 @@ function formatCurrentTrace({ traceId, spanId, traceFlags }) {
   return {
     "logging.googleapis.com/spanId": spanId,
     "logging.googleapis.com/trace": traceId,
-    "logging.googleapis.com/trace_sampled": traceFlags === true,
+    "logging.googleapis.com/trace_sampled": traceFlags === 1,
   };
 }
 
