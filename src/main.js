@@ -4,6 +4,9 @@ const { HttpInstrumentation } = require("@opentelemetry/instrumentation-http");
 const { KoaInstrumentation } = require("@opentelemetry/instrumentation-koa");
 const { NodeTracerProvider } = require("@opentelemetry/node");
 const {
+  TraceExporter,
+} = require("@google-cloud/opentelemetry-cloud-trace-exporter");
+const {
   // ConsoleSpanExporter,
   SimpleSpanProcessor,
 } = require("@opentelemetry/tracing");
@@ -24,30 +27,19 @@ exports.logger = logger;
 exports.createLogger = createLogger;
 exports.loggingMiddleware = loggingMiddleware;
 
-function setupTelemetry(
-  {
-    http = {
-      ignoreIncomingPaths: ["/"],
-      ignoreOutgoingUrls: [],
-    },
-  } = { http: {} }
-) {
+function setupTelemetry(options = {}) {
   const provider = new NodeTracerProvider();
   provider.register();
 
   registerInstrumentations({
     instrumentations: [
       new HttpInstrumentation({
-        ...http,
+        ...options.http,
       }),
       new KoaInstrumentation(),
     ],
     tracerProvider: provider,
   });
-
-  const {
-    TraceExporter,
-  } = require("@google-cloud/opentelemetry-cloud-trace-exporter");
 
   // Configure the span processor to send spans to the exporter
   provider.addSpanProcessor(new SimpleSpanProcessor(new TraceExporter()));
