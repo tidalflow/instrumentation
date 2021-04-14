@@ -85,12 +85,12 @@ const levelToHttp = {
 function onResFinished(
   loggerInstance,
   httpRequestFormat,
+  level,
   startTime,
   request,
   response
 ) {
   const latency = Date.now() - startTime;
-  const level = levelToHttp[response.statusCode] || "info";
 
   const payload = httpRequestFormat({
     response,
@@ -109,6 +109,7 @@ exports.loggingMiddleware = function loggingMiddleware(options = {}) {
   const { httpRequestFormat, ignoreUserAgents, tracingEnabled } = {
     ignoreUserAgents: [/GoogleHC\/.*/i, /kube-probe\/.*/i],
     tracingEnabled: NODE_ENV === "production",
+    getLevel: (ctx) => (ctx.res.statusCode < 500 ? "info" : "error"),
     httpRequestFormat:
       NODE_ENV === "production" ? formatters.gcloud : formatters.development,
     ...options,
@@ -131,10 +132,24 @@ exports.loggingMiddleware = function loggingMiddleware(options = {}) {
     }
 
     res.once("finish", () =>
-      onResFinished(requestLogger, httpRequestFormat, startTime, req, res)
+      onResFinished(
+        requestLogger,
+        httpRequestFormat,
+        getLevel(ctx),
+        startTime,
+        req,
+        res
+      )
     );
     res.once("error", (err) =>
-      onResFinished(requestLogger, httpRequestFormat, startTime, req, res, err)
+      onResFinished(
+        requestLogger,
+        httpRequestFormat,
+        "error",
+        startTime,
+        req,
+        res
+      )
     );
     return next();
   }
