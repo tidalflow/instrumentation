@@ -75,13 +75,6 @@ const formatters = {
   },
 };
 
-const levelToHttp = {
-  401: "warn",
-  400: "warn",
-  404: "error",
-  500: "error",
-};
-
 function onResFinished(
   loggerInstance,
   httpRequestFormat,
