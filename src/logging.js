@@ -99,7 +99,7 @@ function onResFinished(
 }
 
 exports.loggingMiddleware = function loggingMiddleware(options = {}) {
-  const { httpRequestFormat, ignoreUserAgents, tracingEnabled } = {
+  const { httpRequestFormat, ignoreUserAgents, tracingEnabled, getLevel } = {
     ignoreUserAgents: [/GoogleHC\/.*/i, /kube-probe\/.*/i],
     tracingEnabled: NODE_ENV === "production",
     getLevel: (ctx) => (ctx.res.statusCode < 500 ? "info" : "error"),
