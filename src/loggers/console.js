@@ -27,7 +27,7 @@ class ConsoleLogger {
   }
 
   write(loggerFn, level, ...args) {
-    if ([levels].indexOf(this.level) > [levels].indexOf(level)) {
+    if (levels.indexOf(this._level) > levels.indexOf(level)) {
       return;
     }
 
