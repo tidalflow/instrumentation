@@ -28,14 +28,24 @@ if(process.env.NODE_ENV === 'production') {
 // other code
 ```
 
-## Developer mode vs Production mode
+## Development vs Production
 
-In none product mode (process.env.NODE_ENV != `production`) some features are turn off or swapped out with development friendly solutions.
+When `process.env.NODE_ENV != production` some features are turned off or swapped out with development friendly solutions:
 
-- Tracing/Instrumention is turned off (makes the boot time slower)
-- The logger is switch to develop friendly solution
-  - No request context (doesn't work without tracing)
-  - No structured logging output, simple output rendering using `console`
+- Tracing/Instrumention is turned off (makes boot time faster)
+- Simple output rendering using `console`
+- Allows silencing output with log levels.
+
+## Log Levels
+
+Setting `process.env.LOG_LEVEL` will set the log level which silences lower level output. The levels are:
+
+- trace
+- debug
+- info
+- warn
+- error
+- fatal
 
 ### Methods
 
@@ -59,7 +69,7 @@ Create a new logger instance
 
 Http logging middleware
 
-### Propterties
+### Properties
 
 #### logger
 
