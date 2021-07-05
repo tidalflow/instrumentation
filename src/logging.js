@@ -1,4 +1,4 @@
-const api = require("@opentelemetry/api");
+const opentelemetry = require("@opentelemetry/api");
 const klour = require("kleur");
 
 const bytes = require("bytes");
@@ -11,9 +11,11 @@ const parentLogger =
     : require("./loggers/console");
 
 function getTracerContext() {
-  const currentSpan = api.getSpan(api.context.active());
-  if (!currentSpan) return null;
-  return currentSpan.context();
+  const context = opentelemetry.trace.getSpanContext(
+    opentelemetry.context.active()
+  );
+  if (!context) return null;
+  return context;
 }
 
 function formatCurrentTrace({ traceId, spanId, traceFlags }) {

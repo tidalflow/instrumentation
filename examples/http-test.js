@@ -1,7 +1,7 @@
-const { getTracer, initalize } = require("../src/main");
-initalize();
+const { setupTelemetry } = require("../src/main");
 
-const tracer = getTracer("test");
+setupTelemetry();
+const opentelemetry = require("@opentelemetry/api");
 
 // eslint-disable-next-line import/order
 const http = require("http");
@@ -26,9 +26,12 @@ function handleRequest(request, response) {
     request.on("error", (err) => console.log(err));
     request.on("data", (chunk) => body.push(chunk));
     request.on("end", () => {
+      const context = opentelemetry.trace.getSpanContext(
+        opentelemetry.context.active()
+      );
       // deliberately sleeping to mock some action.
       setTimeout(() => {
-        response.end(`Trace Id: ${tracer.getCurrentSpan().context().traceId}`);
+        response.end(`Trace Id: ${context.traceId}`);
       }, 2000);
     });
   } catch (err) {
