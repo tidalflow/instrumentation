@@ -1,5 +1,8 @@
 const opentelemetry = require("@opentelemetry/api");
 
+const {
+  MongoDBInstrumentation,
+} = require("@opentelemetry/instrumentation-mongodb");
 const { HttpInstrumentation } = require("@opentelemetry/instrumentation-http");
 const { KoaInstrumentation } = require("@opentelemetry/instrumentation-koa");
 const { NodeTracerProvider } = require("@opentelemetry/node");
@@ -37,7 +40,13 @@ function setupTelemetry(options = {}) {
       new HttpInstrumentation({
         ...options.http,
       }),
-      new KoaInstrumentation(),
+      new KoaInstrumentation({
+        ...options.koa,
+      }),
+      new MongoDBInstrumentation({
+        // see under for available configuration
+        ...options.mongodb,
+      }),
     ],
     tracerProvider: provider,
   });
