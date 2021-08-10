@@ -49,6 +49,9 @@ const formatters = {
     const contentLength = response.getHeader("content-length");
     const formatLength = contentLength ? bytes(Number(contentLength)) : "?KB";
 
+    const seconds = Math.floor(latency / 1000);
+    const ms = (Math.floor(latency % 1000) / 1000).toFixed(3).replace("0.", "");
+
     return {
       message: `${request.method} ${request.url} ${formatLength} - ${latency}ms`,
       httpRequest: {
@@ -59,10 +62,12 @@ const formatters = {
         userAgent: request.headers["user-agent"],
         referer: request.headers["referer"],
         remoteIp: request.headers["x-forwarded-for"],
-        latency: `${Math.floor(latency / 1e3)}.${Math.floor(latency % 1e3)}s`,
+        latency: `${seconds}.${ms}s`,
         protocol: request.headers["x-forwarded-proto"],
         responseSize: response.getHeader("content-length"),
       },
+      // only to test if works
+      latencyMs: latency,
     };
   },
   development: function ({ request, response, latency }) {
