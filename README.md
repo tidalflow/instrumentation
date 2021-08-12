@@ -63,7 +63,27 @@ Returns a tracer from the global tracer provider
 createLogger(props): Logger
 ```
 
-Create a new logger instance
+#### getMeterProvider
+
+```
+getMeterProvider({ name: "MyMetric" }): Meter
+```
+
+Example:
+
+```javascript
+const { getMeterProvider } = require("@bedrockio/instrumentation");
+
+const meter = getMeterProvider();
+
+const counter = meter.createCounter("metric_name", {
+  description: "Example of a counter",
+});
+
+counter.add(10);
+```
+
+See https://github.com/open-telemetry/opentelemetry-js/tree/main/packages/opentelemetry-sdk-metrics-base for more examples
 
 #### loggingMiddleware
 
