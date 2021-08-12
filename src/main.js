@@ -1,4 +1,8 @@
 const opentelemetry = require("@opentelemetry/api");
+const { MeterProvider } = require("@opentelemetry/metrics");
+const {
+  MetricExporter,
+} = require("@google-cloud/opentelemetry-cloud-monitoring-exporter");
 
 const {
   MongoDBInstrumentation,
@@ -65,4 +69,13 @@ exports.initalize = exports.initialize = function (args) {
     `@bedrockio/instrumentation "initialize" is deprecated please use "setupTelemetry" instead.`
   );
   setupTelemetry(args);
+};
+
+const exporter = new MetricExporter();
+exports.getMeterProvider = function (options = {}) {
+  // Register the exporter
+  return new MeterProvider({
+    exporter,
+    interval: options.interval || 60000,
+  }).getMeter(options.name || "your-meter-name", options.version);
 };

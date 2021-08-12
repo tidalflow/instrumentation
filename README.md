@@ -22,7 +22,7 @@ npm install @bedrockio/instrumentation
 
 ```javascript
 const { setupTelemetry } = require("@bedrockio/instrumentation");
-if(process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   setupTelemetry();
 }
 // other code

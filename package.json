@@ -6,6 +6,7 @@
   "author": "Kaare Larsen",
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/opentelemetry-cloud-monitoring-exporter": "^0.11.0",
     "@google-cloud/opentelemetry-cloud-trace-exporter": "^0.11.0",
     "@opentelemetry/api": "^1.0.2",
     "@opentelemetry/core": "^0.24.0",
@@ -14,6 +15,7 @@
     "@opentelemetry/instrumentation-http": "^0.24.0",
     "@opentelemetry/instrumentation-koa": "^0.24.0",
     "@opentelemetry/instrumentation-mongodb": "^0.24.0",
+    "@opentelemetry/metrics": "^0.24.0",
     "@opentelemetry/node": "^0.24.0",
     "@opentelemetry/tracing": "^0.24.0",
     "bytes": "^3.1.0",
