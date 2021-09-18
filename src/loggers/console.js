@@ -4,7 +4,7 @@ const levels = ["trace", "debug", "info", "warn", "error", "fatal"];
 
 class ConsoleLogger {
   _version = "console";
-  _level = process.env.LOG_LEVEL || "trace";
+  _level = process.env.LOG_LEVEL || "warn";
 
   constructor(props = {}) {
     this.props = props;
