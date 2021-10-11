@@ -31,28 +31,44 @@ const hooks = {
   },
 };
 
+const levelToSeverity = {
+  trace: "DEBUG",
+  debug: "DEBUG",
+  info: "INFO",
+  warn: "WARNING",
+  error: "ERROR",
+  fatal: "CRITICAL",
+};
+
 module.exports = pino({
   messageKey: "message",
   formatters: {
-    level(_, level) {
-      if (level === 20) {
-        return { severity: "debug" };
-      }
-      if (level === 30) {
-        return { severity: "info" };
-      }
-      if (level === 40) {
-        return { severity: "warning" };
-      }
-      if (level === 50) {
-        return { severity: "error" };
-      }
-      if (level >= 60) {
-        return { severity: "critical" };
-      }
-      return { severity: "default" };
+    level(label) {
+      const pinoLevel = label;
+      // `@type` property tells Error Reporting to track even if there is no `stack_trace`
+      const typeProp =
+        label === "error" || label === "fatal"
+          ? {
+              "@type":
+                "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent",
+            }
+          : {};
+
+      return {
+        severity: levelToSeverity[pinoLevel],
+        ...typeProp,
+      };
+    },
+    log(object) {
+      const stackTrace = object.err && object.err.stack;
+      const stackProp = stackTrace ? { stack_trace: stackTrace } : {};
+      return {
+        ...object,
+        ...stackProp,
+      };
     },
   },
+
   base: null,
   level: process.env.LOG_LEVEL || "info",
   timestamp: pino.stdTimeFunctions.isoTime,
