@@ -1,23 +1,21 @@
 const opentelemetry = require("@opentelemetry/api");
-const { MeterProvider } = require("@opentelemetry/metrics");
+const { MeterProvider } = require("@opentelemetry/sdk-metrics-base");
 const {
   MetricExporter,
 } = require("@google-cloud/opentelemetry-cloud-monitoring-exporter");
 
-const {
-  MongoDBInstrumentation,
-} = require("@opentelemetry/instrumentation-mongodb");
 const { HttpInstrumentation } = require("@opentelemetry/instrumentation-http");
 const { KoaInstrumentation } = require("@opentelemetry/instrumentation-koa");
-const { NodeTracerProvider } = require("@opentelemetry/node");
+const { NodeTracerProvider } = require("@opentelemetry/sdk-trace-node");
 
 const {
   TraceExporter,
 } = require("@google-cloud/opentelemetry-cloud-trace-exporter");
+
 const {
   // ConsoleSpanExporter,
   BatchSpanProcessor,
-} = require("@opentelemetry/tracing");
+} = require("@opentelemetry/sdk-trace-base");
 
 const { registerInstrumentations } = require("@opentelemetry/instrumentation");
 const { logger, createLogger, loggingMiddleware } = require("./logging");
@@ -46,10 +44,6 @@ function setupTelemetry(options = {}) {
       }),
       new KoaInstrumentation({
         ...options.koa,
-      }),
-      new MongoDBInstrumentation({
-        // see under for available configuration
-        ...options.mongodb,
       }),
     ],
     tracerProvider: provider,
