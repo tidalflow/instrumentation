@@ -118,7 +118,6 @@ exports.loggingMiddleware = function loggingMiddleware(options = {}) {
 
   async function loggingMiddlewareInner(ctx, next) {
     const { req, res } = ctx;
-
     const startTime = Date.now();
     const requestLogger = createLogger({}, tracingEnabled);
 
