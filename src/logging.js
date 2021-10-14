@@ -1,6 +1,5 @@
 const opentelemetry = require("@opentelemetry/api");
 const klour = require("kleur");
-
 const bytes = require("bytes");
 
 const NODE_ENV = process.env.NODE_ENV;
@@ -14,7 +13,10 @@ function getTracerContext() {
   const context = opentelemetry.trace.getSpanContext(
     opentelemetry.context.active()
   );
-  if (!context) return null;
+
+  if (!context) {
+    return null;
+  }
   return context;
 }
 
@@ -91,7 +93,6 @@ function onResFinished(
   response
 ) {
   const latency = Date.now() - startTime;
-
   const payload = httpRequestFormat({
     response,
     request,
@@ -136,16 +137,6 @@ exports.loggingMiddleware = function loggingMiddleware(options = {}) {
         requestLogger,
         httpRequestFormat,
         getLevel(ctx),
-        startTime,
-        req,
-        res
-      )
-    );
-    res.once("error", (err) =>
-      onResFinished(
-        requestLogger,
-        httpRequestFormat,
-        "error",
         startTime,
         req,
         res

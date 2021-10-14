@@ -44,26 +44,16 @@ module.exports = pino({
   messageKey: "message",
   formatters: {
     level(label) {
-      const pinoLevel = label;
-      // `@type` property tells Error Reporting to track even if there is no `stack_trace`
-      const typeProp =
-        label === "error" || label === "fatal"
-          ? {
-              "@type":
-                "type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent",
-            }
-          : {};
-
       return {
-        severity: levelToSeverity[pinoLevel],
-        ...typeProp,
+        severity: levelToSeverity[label],
       };
     },
     log(object) {
-      const stackTrace = object.err && object.err.stack;
+      const { err, ...rest } = object;
+      const stackTrace = err && err.stack;
       const stackProp = stackTrace ? { stack_trace: stackTrace } : {};
       return {
-        ...object,
+        ...rest,
         ...stackProp,
       };
     },

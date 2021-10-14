@@ -29,6 +29,7 @@ function handleRequest(request, response) {
       const context = opentelemetry.trace.getSpanContext(
         opentelemetry.context.active()
       );
+      console.log(context);
       // deliberately sleeping to mock some action.
       setTimeout(() => {
         response.end(`Trace Id: ${context.traceId}`);
