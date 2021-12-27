@@ -1,4 +1,3 @@
-console.time("tme");
 const opentelemetry = require("@opentelemetry/api");
 
 const { logger, createLogger, loggingMiddleware } = require("./logging");
@@ -62,5 +61,3 @@ exports.initalize = exports.initialize = function (args) {
   );
   setupTelemetry(args);
 };
-
-console.timeEnd("tme");
