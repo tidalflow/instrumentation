@@ -1,23 +1,6 @@
+console.time("tme");
 const opentelemetry = require("@opentelemetry/api");
-const { MeterProvider } = require("@opentelemetry/sdk-metrics-base");
-const {
-  MetricExporter,
-} = require("@google-cloud/opentelemetry-cloud-monitoring-exporter");
 
-const { HttpInstrumentation } = require("@opentelemetry/instrumentation-http");
-const { KoaInstrumentation } = require("@opentelemetry/instrumentation-koa");
-const { NodeTracerProvider } = require("@opentelemetry/sdk-trace-node");
-
-const {
-  TraceExporter,
-} = require("@google-cloud/opentelemetry-cloud-trace-exporter");
-
-const {
-  // ConsoleSpanExporter,
-  BatchSpanProcessor,
-} = require("@opentelemetry/sdk-trace-base");
-
-const { registerInstrumentations } = require("@opentelemetry/instrumentation");
 const { logger, createLogger, loggingMiddleware } = require("./logging");
 
 /**
@@ -34,6 +17,21 @@ exports.createLogger = createLogger;
 exports.loggingMiddleware = loggingMiddleware;
 
 function setupTelemetry(options = {}) {
+  const {
+    HttpInstrumentation,
+  } = require("@opentelemetry/instrumentation-http");
+  const { KoaInstrumentation } = require("@opentelemetry/instrumentation-koa");
+  const { NodeTracerProvider } = require("@opentelemetry/sdk-trace-node");
+  const {
+    registerInstrumentations,
+  } = require("@opentelemetry/instrumentation");
+
+  const {
+    TraceExporter,
+  } = require("@google-cloud/opentelemetry-cloud-trace-exporter");
+
+  const { BatchSpanProcessor } = require("@opentelemetry/sdk-trace-base");
+
   const provider = new NodeTracerProvider();
   provider.register();
 
@@ -65,11 +63,4 @@ exports.initalize = exports.initialize = function (args) {
   setupTelemetry(args);
 };
 
-const exporter = new MetricExporter();
-exports.getMeterProvider = function (options = {}) {
-  // Register the exporter
-  return new MeterProvider({
-    exporter,
-    interval: options.interval || 60000,
-  }).getMeter(options.name || "your-meter-name", options.version);
-};
+console.timeEnd("tme");
